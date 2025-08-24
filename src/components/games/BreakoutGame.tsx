@@ -190,6 +190,11 @@ export const BreakoutGame = ({ onExit }: { onExit: () => void }) => {
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
+      // Prevent default for game controls
+      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' ', 'Enter', 'Escape'].includes(event.key)) {
+        event.preventDefault();
+      }
+      
       gameStateRef.current.keys.add(event.key);
       
       if (event.key === 'Escape') {

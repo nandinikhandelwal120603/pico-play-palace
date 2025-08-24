@@ -133,6 +133,11 @@ export const SnakeGame = ({ onExit }: { onExit: () => void }) => {
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
+      // Prevent default for game controls
+      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' ', 'Enter', 'Escape'].includes(event.key)) {
+        event.preventDefault();
+      }
+      
       const state = gameStateRef.current;
       
       if (event.key === 'Escape') {

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ArcadeMenu } from '@/components/ArcadeMenu';
 import { PongGame } from '@/components/games/PongGame';
 import { SnakeGame } from '@/components/games/SnakeGame';
@@ -82,35 +82,45 @@ const games = [
 
 const Index = () => {
   const [currentGame, setCurrentGame] = useState<typeof games[0] | null>(null);
+  const [showMenu, setShowMenu] = useState(false);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === ' ' && !showMenu && !currentGame) {
+        event.preventDefault();
+        setShowMenu(true);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [showMenu, currentGame]);
 
   if (currentGame) {
     const GameComponent = currentGame.component;
     return <GameComponent onExit={() => setCurrentGame(null)} />;
   }
 
+  if (showMenu) {
+    return <ArcadeMenu games={games} onSelectGame={setCurrentGame} onBack={() => setShowMenu(false)} />;
+  }
+
   return (
-    <div className="relative">
-      {/* Hero Section */}
-      <div 
-        className="h-screen flex items-center justify-center bg-cover bg-center relative"
-        style={{ backgroundImage: `url(${arcadeHero})` }}
-      >
-        <div className="absolute inset-0 bg-black/50"></div>
-        <div className="relative z-10 text-center">
-          <h1 className="font-arcade text-8xl text-primary mb-6 drop-shadow-2xl">
-            RETRO ARCADE
-          </h1>
-          <p className="font-arcade text-2xl text-accent mb-8">
-            Classic Games Collection
-          </p>
-          <div className="insert-coin font-arcade text-xl">
-            SCROLL DOWN TO PLAY
-          </div>
+    <div className="min-h-screen crt-screen flex items-center justify-center bg-cover bg-center relative"
+         style={{ backgroundImage: `url(${arcadeHero})` }}>
+      <div className="scanline"></div>
+      <div className="absolute inset-0 bg-background/70"></div>
+      <div className="relative z-10 text-center">
+        <h1 className="font-arcade text-8xl text-primary mb-6 drop-shadow-2xl">
+          RETRO ARCADE
+        </h1>
+        <p className="font-arcade text-2xl text-accent mb-8">
+          Classic Games Collection
+        </p>
+        <div className="insert-coin font-arcade text-xl">
+          PRESS SPACE TO ENTER
         </div>
       </div>
-
-      {/* Arcade Menu */}
-      <ArcadeMenu games={games} onSelectGame={setCurrentGame} />
     </div>
   );
 };

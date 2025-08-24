@@ -11,9 +11,10 @@ interface Game {
 interface ArcadeMenuProps {
   games: Game[];
   onSelectGame: (game: Game) => void;
+  onBack: () => void;
 }
 
-export const ArcadeMenu = ({ games, onSelectGame }: ArcadeMenuProps) => {
+export const ArcadeMenu = ({ games, onSelectGame, onBack }: ArcadeMenuProps) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [credits, setCredits] = useState(0);
 
@@ -31,10 +32,13 @@ export const ArcadeMenu = ({ games, onSelectGame }: ArcadeMenuProps) => {
           setCredits((prev) => prev + 1);
           break;
         case 'Enter':
-          if (credits > 0) {
-            setCredits((prev) => prev - 1);
+          if (credits >= 2) {
+            setCredits((prev) => prev - 2);
             onSelectGame(games[selectedIndex]);
           }
+          break;
+        case 'Escape':
+          onBack();
           break;
       }
     };
@@ -58,8 +62,8 @@ export const ArcadeMenu = ({ games, onSelectGame }: ArcadeMenuProps) => {
         }
 
         // Button B (start game)
-        if (gamepad.buttons[1]?.pressed && credits > 0) {
-          setCredits((prev) => prev - 1);
+        if (gamepad.buttons[1]?.pressed && credits >= 2) {
+          setCredits((prev) => prev - 2);
           onSelectGame(games[selectedIndex]);
         }
       }
@@ -102,8 +106,8 @@ export const ArcadeMenu = ({ games, onSelectGame }: ArcadeMenuProps) => {
             `}
             onClick={() => {
               setSelectedIndex(index);
-              if (credits > 0) {
-                setCredits((prev) => prev - 1);
+              if (credits >= 2) {
+                setCredits((prev) => prev - 2);
                 onSelectGame(game);
               }
             }}
@@ -116,8 +120,9 @@ export const ArcadeMenu = ({ games, onSelectGame }: ArcadeMenuProps) => {
 
       {/* Instructions */}
       <div className="mt-12 text-center font-arcade text-sm opacity-60">
-        <p>↑ ↓ ARROWS TO SELECT • SPACE TO INSERT COIN • ENTER TO START</p>
+        <p>↑ ↓ ARROWS TO SELECT • SPACE TO INSERT COIN • ENTER TO START (2 COINS)</p>
         <p className="mt-2">GAMEPAD: D-PAD TO SELECT • A TO INSERT COIN • B TO START</p>
+        <p className="mt-2">ESC TO GO BACK TO TITLE SCREEN</p>
       </div>
     </div>
   );
